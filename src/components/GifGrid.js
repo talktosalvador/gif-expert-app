@@ -1,33 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { useFetchGifs } from "../hooks/useFetchGifs";
 import { GifGridItem } from "./GifGridItem";
 
 export const GifGrid = ({ categoria }) => {
-  const [imagenes, setImagenes] = useState([]);
-
-  useEffect(() => {
-    getGifs();
-  }, []);
-
-  const getGifs = async () => {
-    const url =
-      "https://api.giphy.com/v1/gifs/search?q=game+of+thrones&limit=15&api_key=iSxjBIXwgXfvRcGuUjo8px4LudEYocO4";
-    const respuesta = await fetch(url);
-    const { data } = await respuesta.json();
-    const gifs = data.map((gif) => {
-      return {
-        id: gif.id,
-        title: gif.title,
-        url: gif.images.downsized_medium.url,
-      };
-    });
-    setImagenes(gifs);
-  };
+  const { data: images, loading } = useFetchGifs(categoria);
 
   return (
     <>
       <h3>{categoria}</h3>
+      {loading && <p className="animate__animated animate__flash">Loading</p>}
       <div className="card-grid">
-        {imagenes.map((imagen) => (
+        {images.map((imagen) => (
           <GifGridItem key={imagen.id} {...imagen} />
         ))}
       </div>
